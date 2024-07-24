@@ -1,0 +1,411 @@
+
+2210_Motor.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001ae  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000202  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000202  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000234  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000080  00000000  00000000  00000270  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000009da  00000000  00000000  000002f0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000658  00000000  00000000  00000cca  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000437  00000000  00000000  00001322  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000118  00000000  00000000  0000175c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000034b  00000000  00000000  00001874  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000390  00000000  00000000  00001bbf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000060  00000000  00000000  00001f4f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 d5 00 	jmp	0x1aa	; 0x1aa <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include <util/delay.h>
+#include "MOTORCONTROL.h"
+
+int main(void)
+{
+	DDRD = 0xFF;
+  6c:	8f ef       	ldi	r24, 0xFF	; 255
+  6e:	81 bb       	out	0x11, r24	; 17
+	PORTD = 0x00;
+  70:	12 ba       	out	0x12, r1	; 18
+	DDRA = 0x00;
+  72:	1a ba       	out	0x1a, r1	; 26
+	PORTA = 0xFF;
+  74:	8b bb       	out	0x1b, r24	; 27
+
+    /* Replace with your application code */
+    while (1) 
+    {
+		if (!(PINA & (1 << 0)))
+  76:	c8 99       	sbic	0x19, 0	; 25
+  78:	06 c0       	rjmp	.+12     	; 0x86 <main+0x1a>
+		{
+			Forward(500,500);
+  7a:	64 ef       	ldi	r22, 0xF4	; 244
+  7c:	71 e0       	ldi	r23, 0x01	; 1
+  7e:	84 ef       	ldi	r24, 0xF4	; 244
+  80:	91 e0       	ldi	r25, 0x01	; 1
+  82:	0e 94 71 00 	call	0xe2	; 0xe2 <Forward>
+		}
+		if (!(PINA & (1 << 1)))
+  86:	c9 99       	sbic	0x19, 1	; 25
+  88:	06 c0       	rjmp	.+12     	; 0x96 <main+0x2a>
+		{
+			Backward(500,500);
+  8a:	64 ef       	ldi	r22, 0xF4	; 244
+  8c:	71 e0       	ldi	r23, 0x01	; 1
+  8e:	84 ef       	ldi	r24, 0xF4	; 244
+  90:	91 e0       	ldi	r25, 0x01	; 1
+  92:	0e 94 88 00 	call	0x110	; 0x110 <Backward>
+		}
+		if (!(PINA & (1 << 2)))
+  96:	ca 99       	sbic	0x19, 2	; 25
+  98:	06 c0       	rjmp	.+12     	; 0xa6 <main+0x3a>
+		{
+			Turnleft(500,0);
+  9a:	60 e0       	ldi	r22, 0x00	; 0
+  9c:	70 e0       	ldi	r23, 0x00	; 0
+  9e:	84 ef       	ldi	r24, 0xF4	; 244
+  a0:	91 e0       	ldi	r25, 0x01	; 1
+  a2:	0e 94 9f 00 	call	0x13e	; 0x13e <Turnleft>
+		}
+		if (!(PINA & (1 << 3)))
+  a6:	cb 99       	sbic	0x19, 3	; 25
+  a8:	06 c0       	rjmp	.+12     	; 0xb6 <main+0x4a>
+		{
+			TurnRight(0,500);
+  aa:	64 ef       	ldi	r22, 0xF4	; 244
+  ac:	71 e0       	ldi	r23, 0x01	; 1
+  ae:	80 e0       	ldi	r24, 0x00	; 0
+  b0:	90 e0       	ldi	r25, 0x00	; 0
+  b2:	0e 94 b8 00 	call	0x170	; 0x170 <TurnRight>
+		}
+		if (!(PINA & (1 << 4)))
+  b6:	cc 99       	sbic	0x19, 4	; 25
+  b8:	de cf       	rjmp	.-68     	; 0x76 <main+0xa>
+		{
+			Stop();
+  ba:	0e 94 d1 00 	call	0x1a2	; 0x1a2 <Stop>
+  be:	db cf       	rjmp	.-74     	; 0x76 <main+0xa>
+
+000000c0 <PWM_Init>:
+	OCR1A = duty;
+}
+
+void Right_Duty(uint16_t duty)
+{
+	OCR1B = duty;
+  c0:	9c 01       	movw	r18, r24
+  c2:	91 b3       	in	r25, 0x11	; 17
+  c4:	90 63       	ori	r25, 0x30	; 48
+  c6:	91 bb       	out	0x11, r25	; 17
+  c8:	9f b5       	in	r25, 0x2f	; 47
+  ca:	92 6a       	ori	r25, 0xA2	; 162
+  cc:	9f bd       	out	0x2f, r25	; 47
+  ce:	9e b5       	in	r25, 0x2e	; 46
+  d0:	98 61       	ori	r25, 0x18	; 24
+  d2:	9e bd       	out	0x2e, r25	; 46
+  d4:	37 bd       	out	0x27, r19	; 39
+  d6:	26 bd       	out	0x26, r18	; 38
+  d8:	08 95       	ret
+
+000000da <PWM_Start>:
+}
+
+void PWM_Start()
+{
+	TCCR1B |= (1 << CS10);
+  da:	8e b5       	in	r24, 0x2e	; 46
+  dc:	81 60       	ori	r24, 0x01	; 1
+  de:	8e bd       	out	0x2e, r24	; 46
+  e0:	08 95       	ret
+
+000000e2 <Forward>:
+}
+
+void Forward(uint16_t left, uint16_t right)
+{
+  e2:	0f 93       	push	r16
+  e4:	1f 93       	push	r17
+  e6:	cf 93       	push	r28
+  e8:	df 93       	push	r29
+  ea:	8c 01       	movw	r16, r24
+  ec:	eb 01       	movw	r28, r22
+	PORTD |= (1 << IN3);
+  ee:	92 9a       	sbi	0x12, 2	; 18
+	PORTD &= ~(1 << IN4);
+  f0:	93 98       	cbi	0x12, 3	; 18
+	PWM_Init(1000);
+  f2:	88 ee       	ldi	r24, 0xE8	; 232
+  f4:	93 e0       	ldi	r25, 0x03	; 3
+  f6:	0e 94 60 00 	call	0xc0	; 0xc0 <PWM_Init>
+	ICR1 = period;
+}
+
+void Left_Duty(uint16_t duty)
+{
+	OCR1A = duty;
+  fa:	1b bd       	out	0x2b, r17	; 43
+  fc:	0a bd       	out	0x2a, r16	; 42
+{
+	PORTD |= (1 << IN3);
+	PORTD &= ~(1 << IN4);
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD |= (1 << IN1);
+  fe:	90 9a       	sbi	0x12, 0	; 18
+	PORTD &= ~(1 << IN2);
+ 100:	91 98       	cbi	0x12, 1	; 18
+	OCR1A = duty;
+}
+
+void Right_Duty(uint16_t duty)
+{
+	OCR1B = duty;
+ 102:	d9 bd       	out	0x29, r29	; 41
+ 104:	c8 bd       	out	0x28, r28	; 40
+	Left_Duty(left);
+	PORTD |= (1 << IN1);
+	PORTD &= ~(1 << IN2);
+	Right_Duty(right);
+	//PWM_Start();
+}
+ 106:	df 91       	pop	r29
+ 108:	cf 91       	pop	r28
+ 10a:	1f 91       	pop	r17
+ 10c:	0f 91       	pop	r16
+ 10e:	08 95       	ret
+
+00000110 <Backward>:
+
+void Backward(uint16_t left, uint16_t right)
+{
+ 110:	0f 93       	push	r16
+ 112:	1f 93       	push	r17
+ 114:	cf 93       	push	r28
+ 116:	df 93       	push	r29
+ 118:	8c 01       	movw	r16, r24
+ 11a:	eb 01       	movw	r28, r22
+	PORTD &= ~(1 << IN3);
+ 11c:	92 98       	cbi	0x12, 2	; 18
+	PORTD |= (1 << IN4);
+ 11e:	93 9a       	sbi	0x12, 3	; 18
+	PWM_Init(1000);
+ 120:	88 ee       	ldi	r24, 0xE8	; 232
+ 122:	93 e0       	ldi	r25, 0x03	; 3
+ 124:	0e 94 60 00 	call	0xc0	; 0xc0 <PWM_Init>
+	ICR1 = period;
+}
+
+void Left_Duty(uint16_t duty)
+{
+	OCR1A = duty;
+ 128:	1b bd       	out	0x2b, r17	; 43
+ 12a:	0a bd       	out	0x2a, r16	; 42
+{
+	PORTD &= ~(1 << IN3);
+	PORTD |= (1 << IN4);
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD &= ~(1 << IN1);
+ 12c:	90 98       	cbi	0x12, 0	; 18
+	PORTD |= (1 << IN2);
+ 12e:	91 9a       	sbi	0x12, 1	; 18
+	OCR1A = duty;
+}
+
+void Right_Duty(uint16_t duty)
+{
+	OCR1B = duty;
+ 130:	d9 bd       	out	0x29, r29	; 41
+ 132:	c8 bd       	out	0x28, r28	; 40
+	Left_Duty(left);
+	PORTD &= ~(1 << IN1);
+	PORTD |= (1 << IN2);
+	Right_Duty(right);
+	//PWM_Start();
+}
+ 134:	df 91       	pop	r29
+ 136:	cf 91       	pop	r28
+ 138:	1f 91       	pop	r17
+ 13a:	0f 91       	pop	r16
+ 13c:	08 95       	ret
+
+0000013e <Turnleft>:
+
+void Turnleft(uint16_t left, uint16_t right)
+{
+ 13e:	0f 93       	push	r16
+ 140:	1f 93       	push	r17
+ 142:	cf 93       	push	r28
+ 144:	df 93       	push	r29
+ 146:	8c 01       	movw	r16, r24
+ 148:	eb 01       	movw	r28, r22
+	PORTD &= ~(1 << IN3);
+ 14a:	92 98       	cbi	0x12, 2	; 18
+	PORTD |= (1 << IN4);
+ 14c:	93 9a       	sbi	0x12, 3	; 18
+	PWM_Init(1000);
+ 14e:	88 ee       	ldi	r24, 0xE8	; 232
+ 150:	93 e0       	ldi	r25, 0x03	; 3
+ 152:	0e 94 60 00 	call	0xc0	; 0xc0 <PWM_Init>
+	ICR1 = period;
+}
+
+void Left_Duty(uint16_t duty)
+{
+	OCR1A = duty;
+ 156:	1b bd       	out	0x2b, r17	; 43
+ 158:	0a bd       	out	0x2a, r16	; 42
+{
+	PORTD &= ~(1 << IN3);
+	PORTD |= (1 << IN4);
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD |= (1 << IN1);
+ 15a:	90 9a       	sbi	0x12, 0	; 18
+	PORTD &= ~(1 << IN2);
+ 15c:	91 98       	cbi	0x12, 1	; 18
+	OCR1A = duty;
+}
+
+void Right_Duty(uint16_t duty)
+{
+	OCR1B = duty;
+ 15e:	d9 bd       	out	0x29, r29	; 41
+ 160:	c8 bd       	out	0x28, r28	; 40
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD |= (1 << IN1);
+	PORTD &= ~(1 << IN2);
+	Right_Duty(right);
+	PWM_Start();
+ 162:	0e 94 6d 00 	call	0xda	; 0xda <PWM_Start>
+}
+ 166:	df 91       	pop	r29
+ 168:	cf 91       	pop	r28
+ 16a:	1f 91       	pop	r17
+ 16c:	0f 91       	pop	r16
+ 16e:	08 95       	ret
+
+00000170 <TurnRight>:
+
+void TurnRight(uint16_t left, uint16_t right)
+{
+ 170:	0f 93       	push	r16
+ 172:	1f 93       	push	r17
+ 174:	cf 93       	push	r28
+ 176:	df 93       	push	r29
+ 178:	8c 01       	movw	r16, r24
+ 17a:	eb 01       	movw	r28, r22
+	PORTD |= (1 << IN3);
+ 17c:	92 9a       	sbi	0x12, 2	; 18
+	PORTD &= ~(1 << IN4);
+ 17e:	93 98       	cbi	0x12, 3	; 18
+	PWM_Init(1000);
+ 180:	88 ee       	ldi	r24, 0xE8	; 232
+ 182:	93 e0       	ldi	r25, 0x03	; 3
+ 184:	0e 94 60 00 	call	0xc0	; 0xc0 <PWM_Init>
+	ICR1 = period;
+}
+
+void Left_Duty(uint16_t duty)
+{
+	OCR1A = duty;
+ 188:	1b bd       	out	0x2b, r17	; 43
+ 18a:	0a bd       	out	0x2a, r16	; 42
+{
+	PORTD |= (1 << IN3);
+	PORTD &= ~(1 << IN4);
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD &= ~(1 << IN1);
+ 18c:	90 98       	cbi	0x12, 0	; 18
+	PORTD |= (1 << IN2);
+ 18e:	91 9a       	sbi	0x12, 1	; 18
+	OCR1A = duty;
+}
+
+void Right_Duty(uint16_t duty)
+{
+	OCR1B = duty;
+ 190:	d9 bd       	out	0x29, r29	; 41
+ 192:	c8 bd       	out	0x28, r28	; 40
+	PWM_Init(1000);
+	Left_Duty(left);
+	PORTD &= ~(1 << IN1);
+	PORTD |= (1 << IN2);
+	Right_Duty(right);
+	PWM_Start();
+ 194:	0e 94 6d 00 	call	0xda	; 0xda <PWM_Start>
+}
+ 198:	df 91       	pop	r29
+ 19a:	cf 91       	pop	r28
+ 19c:	1f 91       	pop	r17
+ 19e:	0f 91       	pop	r16
+ 1a0:	08 95       	ret
+
+000001a2 <Stop>:
+
+void Stop()
+{
+	TCCR1A &= ~((1 << COM1A1) | (1 << COM1B1));
+ 1a2:	8f b5       	in	r24, 0x2f	; 47
+ 1a4:	8f 75       	andi	r24, 0x5F	; 95
+ 1a6:	8f bd       	out	0x2f, r24	; 47
+ 1a8:	08 95       	ret
+
+000001aa <_exit>:
+ 1aa:	f8 94       	cli
+
+000001ac <__stop_program>:
+ 1ac:	ff cf       	rjmp	.-2      	; 0x1ac <__stop_program>

@@ -1,0 +1,46 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+pass                                                                              0x01E3       6
+pass1                                                                             0x01E9       6
+pass2                                                                             0x01EF       6
+pass_md                                                                           0x01F5       6
+mk                                                                                0x01FB       6
+status                                                                            0x0201       1
+keypad                                                                            0x0202      12
+oldpass                                                                           0x020E       6
+_base_y (alcd.lib)                                                                0x0214       4
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+_lcd_x                                                                            R5           1
+_lcd_y                                                                            R4           1
+_lcd_maxx                                                                         R7           1
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+ext_int1_isr                                                                      0x000D4     16
+main                                                                              0x000E4    195
+Write_Pass_toEEP                                                                  0x001A7      3
+Read_Pass_fromEEP                                                                 0x001AA      3
+Assign_Pass                                                                       0x001AD     19
+keypass                                                                           0x001C0     37
+check                                                                             0x001E5     21
+Enter_Pass                                                                        0x001FA     62
+Change_Password                                                                   0x00238    198
+strlen                                                                            0x002FE     12
+_lcd_write_nibble_G101                                                            0x0030A     21
+_lcd_write_data                                                                   0x0031F     13
+lcd_gotoxy                                                                        0x0032C     18
+lcd_clear                                                                         0x0033E     10
+lcd_putchar                                                                       0x00348     19
+lcd_puts                                                                          0x0035B     12
+lcd_init                                                                          0x00367     43
+eeprom_read_block                                                                 0x00392     20
+eeprom_write_block                                                                0x003A6     19

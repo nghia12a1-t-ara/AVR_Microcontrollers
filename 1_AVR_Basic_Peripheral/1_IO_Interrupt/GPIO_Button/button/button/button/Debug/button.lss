@@ -1,0 +1,124 @@
+
+button.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000096  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000ea  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000ea  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000011c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000158  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000005ef  00000000  00000000  00000178  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000568  00000000  00000000  00000767  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000256  00000000  00000000  00000ccf  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000f28  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000307  00000000  00000000  00000f4c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  00001253  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 49 00 	jmp	0x92	; 0x92 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#define button	0
+#define led		1
+
+int main(void)
+{
+    DDRA |= (1 << led);			//led is output
+  6c:	d1 9a       	sbi	0x1a, 1	; 26
+	DDRA &= ~(1 << button);		//button is input
+  6e:	d0 98       	cbi	0x1a, 0	; 26
+	
+	PORTA |= (1 << button);		//button input pullup
+  70:	d8 9a       	sbi	0x1b, 0	; 27
+	PORTA &= ~(1 << led);		//led = 0
+  72:	d9 98       	cbi	0x1b, 1	; 27
+    {
+		if ((PINA & (1 << button)) == 0)		//check button
+		{
+			_delay_ms(1);						//debouncing button
+			while ((PINA & (1 << button)) == 0);		//wait 
+			PORTA ^= (1 << led);			//toggle led
+  74:	92 e0       	ldi	r25, 0x02	; 2
+	PORTA |= (1 << button);		//button input pullup
+	PORTA &= ~(1 << led);		//led = 0
+	
+    while (1) 
+    {
+		if ((PINA & (1 << button)) == 0)		//check button
+  76:	c8 99       	sbic	0x19, 0	; 25
+  78:	fe cf       	rjmp	.-4      	; 0x76 <main+0xa>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  7a:	ef ec       	ldi	r30, 0xCF	; 207
+  7c:	f7 e0       	ldi	r31, 0x07	; 7
+  7e:	31 97       	sbiw	r30, 0x01	; 1
+  80:	f1 f7       	brne	.-4      	; 0x7e <main+0x12>
+  82:	00 c0       	rjmp	.+0      	; 0x84 <main+0x18>
+  84:	00 00       	nop
+		{
+			_delay_ms(1);						//debouncing button
+			while ((PINA & (1 << button)) == 0);		//wait 
+  86:	c8 9b       	sbis	0x19, 0	; 25
+  88:	fe cf       	rjmp	.-4      	; 0x86 <main+0x1a>
+			PORTA ^= (1 << led);			//toggle led
+  8a:	8b b3       	in	r24, 0x1b	; 27
+  8c:	89 27       	eor	r24, r25
+  8e:	8b bb       	out	0x1b, r24	; 27
+  90:	f2 cf       	rjmp	.-28     	; 0x76 <main+0xa>
+
+00000092 <_exit>:
+  92:	f8 94       	cli
+
+00000094 <__stop_program>:
+  94:	ff cf       	rjmp	.-2      	; 0x94 <__stop_program>

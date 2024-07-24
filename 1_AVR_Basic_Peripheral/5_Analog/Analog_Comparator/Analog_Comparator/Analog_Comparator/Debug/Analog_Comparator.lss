@@ -1,0 +1,103 @@
+
+Analog_Comparator.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000008a  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000de  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000de  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000110  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  0000014c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000056d  00000000  00000000  0000016c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000004f7  00000000  00000000  000006d9  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000001de  00000000  00000000  00000bd0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000db0  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000002dd  00000000  00000000  00000dd4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  000010b1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 43 00 	jmp	0x86	; 0x86 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+// doc gia tri nhiet do tai chan AIN0 (PB2) và so sanh voi gia tri dat o chan PB3 - AIN1
+// vuot qua thi bao = led tai pc7
+
+int main()
+{
+	DDRC |= (1 << 7);			// output
+  6c:	a7 9a       	sbi	0x14, 7	; 20
+	ADCSRA &= ~(1 << ADEN); 
+  6e:	37 98       	cbi	0x06, 7	; 6
+	SFIOR |= (1 << ACME);
+  70:	80 b7       	in	r24, 0x30	; 48
+  72:	88 60       	ori	r24, 0x08	; 8
+  74:	80 bf       	out	0x30, r24	; 48
+	ADMUX = 0x00;		//ADC0 = input 
+  76:	17 b8       	out	0x07, r1	; 7
+	ACSR = 0x00;
+  78:	18 b8       	out	0x08, r1	; 8
+	
+	while(1)
+	{
+		if (ACSR & (1 << ACO))		// V_AIN0 > V_AIN1
+  7a:	45 9b       	sbis	0x08, 5	; 8
+  7c:	02 c0       	rjmp	.+4      	; 0x82 <main+0x16>
+			PORTC |= (1 << 7);   //led sang 
+  7e:	af 9a       	sbi	0x15, 7	; 21
+  80:	fc cf       	rjmp	.-8      	; 0x7a <main+0xe>
+		else
+			PORTC &= ~(1 << 7);
+  82:	af 98       	cbi	0x15, 7	; 21
+  84:	fa cf       	rjmp	.-12     	; 0x7a <main+0xe>
+
+00000086 <_exit>:
+  86:	f8 94       	cli
+
+00000088 <__stop_program>:
+  88:	ff cf       	rjmp	.-2      	; 0x88 <__stop_program>

@@ -1,0 +1,123 @@
+
+Joystick_Example.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000000be  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  00000112  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000112  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000144  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000038  00000000  00000000  00000180  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000006a7  00000000  00000000  000001b8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000005e2  00000000  00000000  0000085f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000002b8  00000000  00000000  00000e41  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000054  00000000  00000000  000010fc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000035e  00000000  00000000  00001150  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000091  00000000  00000000  000014ae  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000028  00000000  00000000  0000153f  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 54 00 	call	0xa8	; 0xa8 <main>
+  64:	0c 94 5d 00 	jmp	0xba	; 0xba <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <ADC_Init>:
+  6c:	1a ba       	out	0x1a, r1	; 26
+  6e:	87 e8       	ldi	r24, 0x87	; 135
+  70:	86 b9       	out	0x06, r24	; 6
+  72:	80 e4       	ldi	r24, 0x40	; 64
+  74:	87 b9       	out	0x07, r24	; 7
+  76:	08 95       	ret
+
+00000078 <ADC_Read>:
+  78:	97 b1       	in	r25, 0x07	; 7
+  7a:	8f 70       	andi	r24, 0x0F	; 15
+  7c:	98 2b       	or	r25, r24
+  7e:	97 b9       	out	0x07, r25	; 7
+  80:	36 9a       	sbi	0x06, 6	; 6
+  82:	34 9b       	sbis	0x06, 4	; 6
+  84:	fe cf       	rjmp	.-4      	; 0x82 <ADC_Read+0xa>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  86:	85 e3       	ldi	r24, 0x35	; 53
+  88:	8a 95       	dec	r24
+  8a:	f1 f7       	brne	.-4      	; 0x88 <ADC_Read+0x10>
+  8c:	00 00       	nop
+  8e:	24 b1       	in	r18, 0x04	; 4
+  90:	85 b1       	in	r24, 0x05	; 5
+  92:	90 e0       	ldi	r25, 0x00	; 0
+  94:	98 2f       	mov	r25, r24
+  96:	88 27       	eor	r24, r24
+  98:	82 0f       	add	r24, r18
+  9a:	91 1d       	adc	r25, r1
+  9c:	08 95       	ret
+
+0000009e <PWM_init>:
+  9e:	83 b7       	in	r24, 0x33	; 51
+  a0:	89 66       	ori	r24, 0x69	; 105
+  a2:	83 bf       	out	0x33, r24	; 51
+  a4:	bb 9a       	sbi	0x17, 3	; 23
+  a6:	08 95       	ret
+
+000000a8 <main>:
+  a8:	0e 94 36 00 	call	0x6c	; 0x6c <ADC_Init>
+  ac:	0e 94 4f 00 	call	0x9e	; 0x9e <PWM_init>
+  b0:	80 e0       	ldi	r24, 0x00	; 0
+  b2:	0e 94 3c 00 	call	0x78	; 0x78 <ADC_Read>
+  b6:	8c bf       	out	0x3c, r24	; 60
+  b8:	fb cf       	rjmp	.-10     	; 0xb0 <main+0x8>
+
+000000ba <_exit>:
+  ba:	f8 94       	cli
+
+000000bc <__stop_program>:
+  bc:	ff cf       	rjmp	.-2      	; 0xbc <__stop_program>

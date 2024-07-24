@@ -1,0 +1,475 @@
+
+nrf.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000350  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000003a4  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000003a4  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000003d4  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000088  00000000  00000000  00000410  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   0000141d  00000000  00000000  00000498  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000725  00000000  00000000  000018b5  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   0000075f  00000000  00000000  00001fda  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  000000e8  00000000  00000000  0000273c  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000375  00000000  00000000  00002824  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000ce1  00000000  00000000  00002b99  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000068  00000000  00000000  0000387a  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d8 e0       	ldi	r29, 0x08	; 8
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 a6 01 	jmp	0x34c	; 0x34c <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#define SETBIT(x,y) SETBITS((x), (BIT((y))))
+#define CLEARBIT(x,y) CLEARBITS((x), (BIT((y))))
+
+int main(void)
+{
+	DDRA = 0x00;
+  6c:	1a ba       	out	0x1a, r1	; 26
+	PORTA = 0xFF;
+  6e:	8f ef       	ldi	r24, 0xFF	; 255
+  70:	8b bb       	out	0x1b, r24	; 27
+	DDRD = 0xff;
+  72:	81 bb       	out	0x11, r24	; 17
+	PORTD = 0x00;
+  74:	12 ba       	out	0x12, r1	; 18
+	Init_SPI();
+  76:	0e 94 5d 00 	call	0xba	; 0xba <Init_SPI>
+	Init_nrf();
+  7a:	0e 94 94 00 	call	0x128	; 0x128 <Init_nrf>
+	unsigned char data = 40;
+
+	while (1)
+	{
+		if (!(PINA & (1 << PINA1)))
+  7e:	c9 99       	sbic	0x19, 1	; 25
+  80:	fe cf       	rjmp	.-4      	; 0x7e <main+0x12>
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  82:	2f ef       	ldi	r18, 0xFF	; 255
+  84:	89 ef       	ldi	r24, 0xF9	; 249
+  86:	90 e0       	ldi	r25, 0x00	; 0
+  88:	21 50       	subi	r18, 0x01	; 1
+  8a:	80 40       	sbci	r24, 0x00	; 0
+  8c:	90 40       	sbci	r25, 0x00	; 0
+  8e:	e1 f7       	brne	.-8      	; 0x88 <main+0x1c>
+  90:	00 c0       	rjmp	.+0      	; 0x92 <main+0x26>
+  92:	00 00       	nop
+		{
+			_delay_ms(20);
+			if (!(PINA & (1 << PINA1)))
+  94:	c9 99       	sbic	0x19, 1	; 25
+  96:	f3 cf       	rjmp	.-26     	; 0x7e <main+0x12>
+			{
+				PORTD |= (1 << 6);
+  98:	96 9a       	sbi	0x12, 6	; 18
+				transmit_data(data);
+  9a:	88 e2       	ldi	r24, 0x28	; 40
+  9c:	0e 94 67 01 	call	0x2ce	; 0x2ce <transmit_data>
+  a0:	2f ef       	ldi	r18, 0xFF	; 255
+  a2:	89 e6       	ldi	r24, 0x69	; 105
+  a4:	98 e1       	ldi	r25, 0x18	; 24
+  a6:	21 50       	subi	r18, 0x01	; 1
+  a8:	80 40       	sbci	r24, 0x00	; 0
+  aa:	90 40       	sbci	r25, 0x00	; 0
+  ac:	e1 f7       	brne	.-8      	; 0xa6 <main+0x3a>
+  ae:	00 c0       	rjmp	.+0      	; 0xb0 <main+0x44>
+  b0:	00 00       	nop
+				_delay_ms(500);
+				PORTD &= ~(1 << 6);
+  b2:	96 98       	cbi	0x12, 6	; 18
+				reset();
+  b4:	0e 94 85 01 	call	0x30a	; 0x30a <reset>
+  b8:	e2 cf       	rjmp	.-60     	; 0x7e <main+0x12>
+
+000000ba <Init_SPI>:
+
+void receive_payload()
+{
+	SETBIT(PORTB, 3);	//CE IR_High = "Lyssnar"
+	_delay_ms(1000);	//lyssnar i 1s och om mottaget går int0-interruptvektor igång
+	CLEARBIT(PORTB, 3); //ce låg igen -sluta lyssna
+  ba:	bb 9a       	sbi	0x17, 3	; 23
+  bc:	bc 9a       	sbi	0x17, 4	; 23
+  be:	bd 9a       	sbi	0x17, 5	; 23
+  c0:	bf 9a       	sbi	0x17, 7	; 23
+  c2:	be 98       	cbi	0x17, 6	; 23
+  c4:	8d b1       	in	r24, 0x0d	; 13
+  c6:	81 65       	ori	r24, 0x51	; 81
+  c8:	8d b9       	out	0x0d, r24	; 13
+  ca:	8d b1       	in	r24, 0x0d	; 13
+  cc:	8c 7f       	andi	r24, 0xFC	; 252
+  ce:	8d b9       	out	0x0d, r24	; 13
+  d0:	c4 9a       	sbi	0x18, 4	; 24
+  d2:	c3 98       	cbi	0x18, 3	; 24
+  d4:	08 95       	ret
+
+000000d6 <spi_tranceiver>:
+  d6:	8f b9       	out	0x0f, r24	; 15
+  d8:	77 9b       	sbis	0x0e, 7	; 14
+  da:	fe cf       	rjmp	.-4      	; 0xd8 <spi_tranceiver+0x2>
+  dc:	8f b1       	in	r24, 0x0f	; 15
+  de:	08 95       	ret
+
+000000e0 <Write_byte>:
+  e0:	cf 93       	push	r28
+  e2:	c6 2f       	mov	r28, r22
+  e4:	e3 ec       	ldi	r30, 0xC3	; 195
+  e6:	f9 e0       	ldi	r31, 0x09	; 9
+  e8:	31 97       	sbiw	r30, 0x01	; 1
+  ea:	f1 f7       	brne	.-4      	; 0xe8 <Write_byte+0x8>
+  ec:	00 c0       	rjmp	.+0      	; 0xee <Write_byte+0xe>
+  ee:	00 00       	nop
+  f0:	c4 98       	cbi	0x18, 4	; 24
+  f2:	e3 ec       	ldi	r30, 0xC3	; 195
+  f4:	f9 e0       	ldi	r31, 0x09	; 9
+  f6:	31 97       	sbiw	r30, 0x01	; 1
+  f8:	f1 f7       	brne	.-4      	; 0xf6 <Write_byte+0x16>
+  fa:	00 c0       	rjmp	.+0      	; 0xfc <Write_byte+0x1c>
+  fc:	00 00       	nop
+  fe:	80 5e       	subi	r24, 0xE0	; 224
+ 100:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 104:	83 ec       	ldi	r24, 0xC3	; 195
+ 106:	99 e0       	ldi	r25, 0x09	; 9
+ 108:	01 97       	sbiw	r24, 0x01	; 1
+ 10a:	f1 f7       	brne	.-4      	; 0x108 <Write_byte+0x28>
+ 10c:	00 c0       	rjmp	.+0      	; 0x10e <Write_byte+0x2e>
+ 10e:	00 00       	nop
+ 110:	8c 2f       	mov	r24, r28
+ 112:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 116:	e3 ec       	ldi	r30, 0xC3	; 195
+ 118:	f9 e0       	ldi	r31, 0x09	; 9
+ 11a:	31 97       	sbiw	r30, 0x01	; 1
+ 11c:	f1 f7       	brne	.-4      	; 0x11a <Write_byte+0x3a>
+ 11e:	00 c0       	rjmp	.+0      	; 0x120 <Write_byte+0x40>
+ 120:	00 00       	nop
+ 122:	c4 9a       	sbi	0x18, 4	; 24
+ 124:	cf 91       	pop	r28
+ 126:	08 95       	ret
+
+00000128 <Init_nrf>:
+ 128:	87 ea       	ldi	r24, 0xA7	; 167
+ 12a:	91 e6       	ldi	r25, 0x61	; 97
+ 12c:	01 97       	sbiw	r24, 0x01	; 1
+ 12e:	f1 f7       	brne	.-4      	; 0x12c <Init_nrf+0x4>
+ 130:	00 c0       	rjmp	.+0      	; 0x132 <Init_nrf+0xa>
+ 132:	00 00       	nop
+ 134:	61 e0       	ldi	r22, 0x01	; 1
+ 136:	81 e0       	ldi	r24, 0x01	; 1
+ 138:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 13c:	61 e0       	ldi	r22, 0x01	; 1
+ 13e:	82 e0       	ldi	r24, 0x02	; 2
+ 140:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 144:	63 e0       	ldi	r22, 0x03	; 3
+ 146:	83 e0       	ldi	r24, 0x03	; 3
+ 148:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 14c:	61 e0       	ldi	r22, 0x01	; 1
+ 14e:	85 e0       	ldi	r24, 0x05	; 5
+ 150:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 154:	67 e0       	ldi	r22, 0x07	; 7
+ 156:	86 e0       	ldi	r24, 0x06	; 6
+ 158:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 15c:	83 ec       	ldi	r24, 0xC3	; 195
+ 15e:	99 e0       	ldi	r25, 0x09	; 9
+ 160:	01 97       	sbiw	r24, 0x01	; 1
+ 162:	f1 f7       	brne	.-4      	; 0x160 <Init_nrf+0x38>
+ 164:	00 c0       	rjmp	.+0      	; 0x166 <Init_nrf+0x3e>
+ 166:	00 00       	nop
+ 168:	c4 98       	cbi	0x18, 4	; 24
+ 16a:	83 ec       	ldi	r24, 0xC3	; 195
+ 16c:	99 e0       	ldi	r25, 0x09	; 9
+ 16e:	01 97       	sbiw	r24, 0x01	; 1
+ 170:	f1 f7       	brne	.-4      	; 0x16e <Init_nrf+0x46>
+ 172:	00 c0       	rjmp	.+0      	; 0x174 <Init_nrf+0x4c>
+ 174:	00 00       	nop
+ 176:	8a e2       	ldi	r24, 0x2A	; 42
+ 178:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 17c:	83 ec       	ldi	r24, 0xC3	; 195
+ 17e:	99 e0       	ldi	r25, 0x09	; 9
+ 180:	01 97       	sbiw	r24, 0x01	; 1
+ 182:	f1 f7       	brne	.-4      	; 0x180 <Init_nrf+0x58>
+ 184:	00 c0       	rjmp	.+0      	; 0x186 <Init_nrf+0x5e>
+ 186:	00 00       	nop
+ 188:	81 e0       	ldi	r24, 0x01	; 1
+ 18a:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 18e:	83 ec       	ldi	r24, 0xC3	; 195
+ 190:	99 e0       	ldi	r25, 0x09	; 9
+ 192:	01 97       	sbiw	r24, 0x01	; 1
+ 194:	f1 f7       	brne	.-4      	; 0x192 <Init_nrf+0x6a>
+ 196:	00 c0       	rjmp	.+0      	; 0x198 <Init_nrf+0x70>
+ 198:	00 00       	nop
+ 19a:	82 e0       	ldi	r24, 0x02	; 2
+ 19c:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 1a0:	83 ec       	ldi	r24, 0xC3	; 195
+ 1a2:	99 e0       	ldi	r25, 0x09	; 9
+ 1a4:	01 97       	sbiw	r24, 0x01	; 1
+ 1a6:	f1 f7       	brne	.-4      	; 0x1a4 <Init_nrf+0x7c>
+ 1a8:	00 c0       	rjmp	.+0      	; 0x1aa <Init_nrf+0x82>
+ 1aa:	00 00       	nop
+ 1ac:	83 e0       	ldi	r24, 0x03	; 3
+ 1ae:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 1b2:	83 ec       	ldi	r24, 0xC3	; 195
+ 1b4:	99 e0       	ldi	r25, 0x09	; 9
+ 1b6:	01 97       	sbiw	r24, 0x01	; 1
+ 1b8:	f1 f7       	brne	.-4      	; 0x1b6 <Init_nrf+0x8e>
+ 1ba:	00 c0       	rjmp	.+0      	; 0x1bc <Init_nrf+0x94>
+ 1bc:	00 00       	nop
+ 1be:	84 e0       	ldi	r24, 0x04	; 4
+ 1c0:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 1c4:	83 ec       	ldi	r24, 0xC3	; 195
+ 1c6:	99 e0       	ldi	r25, 0x09	; 9
+ 1c8:	01 97       	sbiw	r24, 0x01	; 1
+ 1ca:	f1 f7       	brne	.-4      	; 0x1c8 <Init_nrf+0xa0>
+ 1cc:	00 c0       	rjmp	.+0      	; 0x1ce <Init_nrf+0xa6>
+ 1ce:	00 00       	nop
+ 1d0:	85 e0       	ldi	r24, 0x05	; 5
+ 1d2:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 1d6:	83 ec       	ldi	r24, 0xC3	; 195
+ 1d8:	99 e0       	ldi	r25, 0x09	; 9
+ 1da:	01 97       	sbiw	r24, 0x01	; 1
+ 1dc:	f1 f7       	brne	.-4      	; 0x1da <Init_nrf+0xb2>
+ 1de:	00 c0       	rjmp	.+0      	; 0x1e0 <Init_nrf+0xb8>
+ 1e0:	00 00       	nop
+ 1e2:	c4 9a       	sbi	0x18, 4	; 24
+ 1e4:	83 ec       	ldi	r24, 0xC3	; 195
+ 1e6:	99 e0       	ldi	r25, 0x09	; 9
+ 1e8:	01 97       	sbiw	r24, 0x01	; 1
+ 1ea:	f1 f7       	brne	.-4      	; 0x1e8 <Init_nrf+0xc0>
+ 1ec:	00 c0       	rjmp	.+0      	; 0x1ee <Init_nrf+0xc6>
+ 1ee:	00 00       	nop
+ 1f0:	c4 98       	cbi	0x18, 4	; 24
+ 1f2:	83 ec       	ldi	r24, 0xC3	; 195
+ 1f4:	99 e0       	ldi	r25, 0x09	; 9
+ 1f6:	01 97       	sbiw	r24, 0x01	; 1
+ 1f8:	f1 f7       	brne	.-4      	; 0x1f6 <Init_nrf+0xce>
+ 1fa:	00 c0       	rjmp	.+0      	; 0x1fc <Init_nrf+0xd4>
+ 1fc:	00 00       	nop
+ 1fe:	80 e3       	ldi	r24, 0x30	; 48
+ 200:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 204:	83 ec       	ldi	r24, 0xC3	; 195
+ 206:	99 e0       	ldi	r25, 0x09	; 9
+ 208:	01 97       	sbiw	r24, 0x01	; 1
+ 20a:	f1 f7       	brne	.-4      	; 0x208 <Init_nrf+0xe0>
+ 20c:	00 c0       	rjmp	.+0      	; 0x20e <Init_nrf+0xe6>
+ 20e:	00 00       	nop
+ 210:	81 e0       	ldi	r24, 0x01	; 1
+ 212:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 216:	83 ec       	ldi	r24, 0xC3	; 195
+ 218:	99 e0       	ldi	r25, 0x09	; 9
+ 21a:	01 97       	sbiw	r24, 0x01	; 1
+ 21c:	f1 f7       	brne	.-4      	; 0x21a <Init_nrf+0xf2>
+ 21e:	00 c0       	rjmp	.+0      	; 0x220 <Init_nrf+0xf8>
+ 220:	00 00       	nop
+ 222:	82 e0       	ldi	r24, 0x02	; 2
+ 224:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 228:	83 ec       	ldi	r24, 0xC3	; 195
+ 22a:	99 e0       	ldi	r25, 0x09	; 9
+ 22c:	01 97       	sbiw	r24, 0x01	; 1
+ 22e:	f1 f7       	brne	.-4      	; 0x22c <Init_nrf+0x104>
+ 230:	00 c0       	rjmp	.+0      	; 0x232 <Init_nrf+0x10a>
+ 232:	00 00       	nop
+ 234:	83 e0       	ldi	r24, 0x03	; 3
+ 236:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 23a:	83 ec       	ldi	r24, 0xC3	; 195
+ 23c:	99 e0       	ldi	r25, 0x09	; 9
+ 23e:	01 97       	sbiw	r24, 0x01	; 1
+ 240:	f1 f7       	brne	.-4      	; 0x23e <Init_nrf+0x116>
+ 242:	00 c0       	rjmp	.+0      	; 0x244 <Init_nrf+0x11c>
+ 244:	00 00       	nop
+ 246:	84 e0       	ldi	r24, 0x04	; 4
+ 248:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 24c:	83 ec       	ldi	r24, 0xC3	; 195
+ 24e:	99 e0       	ldi	r25, 0x09	; 9
+ 250:	01 97       	sbiw	r24, 0x01	; 1
+ 252:	f1 f7       	brne	.-4      	; 0x250 <Init_nrf+0x128>
+ 254:	00 c0       	rjmp	.+0      	; 0x256 <Init_nrf+0x12e>
+ 256:	00 00       	nop
+ 258:	85 e0       	ldi	r24, 0x05	; 5
+ 25a:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 25e:	83 ec       	ldi	r24, 0xC3	; 195
+ 260:	99 e0       	ldi	r25, 0x09	; 9
+ 262:	01 97       	sbiw	r24, 0x01	; 1
+ 264:	f1 f7       	brne	.-4      	; 0x262 <Init_nrf+0x13a>
+ 266:	00 c0       	rjmp	.+0      	; 0x268 <Init_nrf+0x140>
+ 268:	00 00       	nop
+ 26a:	c4 9a       	sbi	0x18, 4	; 24
+ 26c:	61 e0       	ldi	r22, 0x01	; 1
+ 26e:	81 e1       	ldi	r24, 0x11	; 17
+ 270:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 274:	6f e2       	ldi	r22, 0x2F	; 47
+ 276:	84 e0       	ldi	r24, 0x04	; 4
+ 278:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 27c:	6e e1       	ldi	r22, 0x1E	; 30
+ 27e:	80 e0       	ldi	r24, 0x00	; 0
+ 280:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 284:	87 ea       	ldi	r24, 0xA7	; 167
+ 286:	91 e6       	ldi	r25, 0x61	; 97
+ 288:	01 97       	sbiw	r24, 0x01	; 1
+ 28a:	f1 f7       	brne	.-4      	; 0x288 <Init_nrf+0x160>
+ 28c:	00 c0       	rjmp	.+0      	; 0x28e <Init_nrf+0x166>
+ 28e:	00 00       	nop
+ 290:	08 95       	ret
+
+00000292 <Flush_tx>:
+ 292:	83 ec       	ldi	r24, 0xC3	; 195
+ 294:	99 e0       	ldi	r25, 0x09	; 9
+ 296:	01 97       	sbiw	r24, 0x01	; 1
+ 298:	f1 f7       	brne	.-4      	; 0x296 <Flush_tx+0x4>
+ 29a:	00 c0       	rjmp	.+0      	; 0x29c <Flush_tx+0xa>
+ 29c:	00 00       	nop
+ 29e:	c4 98       	cbi	0x18, 4	; 24
+ 2a0:	83 ec       	ldi	r24, 0xC3	; 195
+ 2a2:	99 e0       	ldi	r25, 0x09	; 9
+ 2a4:	01 97       	sbiw	r24, 0x01	; 1
+ 2a6:	f1 f7       	brne	.-4      	; 0x2a4 <Flush_tx+0x12>
+ 2a8:	00 c0       	rjmp	.+0      	; 0x2aa <Flush_tx+0x18>
+ 2aa:	00 00       	nop
+ 2ac:	81 ee       	ldi	r24, 0xE1	; 225
+ 2ae:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 2b2:	83 ec       	ldi	r24, 0xC3	; 195
+ 2b4:	99 e0       	ldi	r25, 0x09	; 9
+ 2b6:	01 97       	sbiw	r24, 0x01	; 1
+ 2b8:	f1 f7       	brne	.-4      	; 0x2b6 <Flush_tx+0x24>
+ 2ba:	00 c0       	rjmp	.+0      	; 0x2bc <Flush_tx+0x2a>
+ 2bc:	00 00       	nop
+ 2be:	c4 9a       	sbi	0x18, 4	; 24
+ 2c0:	83 ec       	ldi	r24, 0xC3	; 195
+ 2c2:	99 e0       	ldi	r25, 0x09	; 9
+ 2c4:	01 97       	sbiw	r24, 0x01	; 1
+ 2c6:	f1 f7       	brne	.-4      	; 0x2c4 <Flush_tx+0x32>
+ 2c8:	00 c0       	rjmp	.+0      	; 0x2ca <Flush_tx+0x38>
+ 2ca:	00 00       	nop
+ 2cc:	08 95       	ret
+
+000002ce <transmit_data>:
+ 2ce:	cf 93       	push	r28
+ 2d0:	c8 2f       	mov	r28, r24
+ 2d2:	0e 94 49 01 	call	0x292	; 0x292 <Flush_tx>
+ 2d6:	6c 2f       	mov	r22, r28
+ 2d8:	80 ea       	ldi	r24, 0xA0	; 160
+ 2da:	0e 94 70 00 	call	0xe0	; 0xe0 <Write_byte>
+ 2de:	83 ec       	ldi	r24, 0xC3	; 195
+ 2e0:	99 e0       	ldi	r25, 0x09	; 9
+ 2e2:	01 97       	sbiw	r24, 0x01	; 1
+ 2e4:	f1 f7       	brne	.-4      	; 0x2e2 <transmit_data+0x14>
+ 2e6:	00 c0       	rjmp	.+0      	; 0x2e8 <transmit_data+0x1a>
+ 2e8:	00 00       	nop
+ 2ea:	c3 9a       	sbi	0x18, 3	; 24
+ 2ec:	87 e8       	ldi	r24, 0x87	; 135
+ 2ee:	93 e1       	ldi	r25, 0x13	; 19
+ 2f0:	01 97       	sbiw	r24, 0x01	; 1
+ 2f2:	f1 f7       	brne	.-4      	; 0x2f0 <transmit_data+0x22>
+ 2f4:	00 c0       	rjmp	.+0      	; 0x2f6 <transmit_data+0x28>
+ 2f6:	00 00       	nop
+ 2f8:	c3 98       	cbi	0x18, 3	; 24
+ 2fa:	83 ec       	ldi	r24, 0xC3	; 195
+ 2fc:	99 e0       	ldi	r25, 0x09	; 9
+ 2fe:	01 97       	sbiw	r24, 0x01	; 1
+ 300:	f1 f7       	brne	.-4      	; 0x2fe <transmit_data+0x30>
+ 302:	00 c0       	rjmp	.+0      	; 0x304 <transmit_data+0x36>
+ 304:	00 00       	nop
+ 306:	cf 91       	pop	r28
+ 308:	08 95       	ret
+
+0000030a <reset>:
+ 30a:	83 ec       	ldi	r24, 0xC3	; 195
+ 30c:	99 e0       	ldi	r25, 0x09	; 9
+ 30e:	01 97       	sbiw	r24, 0x01	; 1
+ 310:	f1 f7       	brne	.-4      	; 0x30e <reset+0x4>
+ 312:	00 c0       	rjmp	.+0      	; 0x314 <reset+0xa>
+ 314:	00 00       	nop
+}
+
+void reset(void)
+{
+	_delay_ms(10);
+	PORTB &= ~(1 << 4);
+ 316:	c4 98       	cbi	0x18, 4	; 24
+ 318:	83 ec       	ldi	r24, 0xC3	; 195
+ 31a:	99 e0       	ldi	r25, 0x09	; 9
+ 31c:	01 97       	sbiw	r24, 0x01	; 1
+ 31e:	f1 f7       	brne	.-4      	; 0x31c <reset+0x12>
+ 320:	00 c0       	rjmp	.+0      	; 0x322 <reset+0x18>
+ 322:	00 00       	nop
+	_delay_ms(10);
+	spi_tranceiver(NRF_STATUS);
+ 324:	87 e0       	ldi	r24, 0x07	; 7
+ 326:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 32a:	83 ec       	ldi	r24, 0xC3	; 195
+ 32c:	99 e0       	ldi	r25, 0x09	; 9
+ 32e:	01 97       	sbiw	r24, 0x01	; 1
+ 330:	f1 f7       	brne	.-4      	; 0x32e <reset+0x24>
+ 332:	00 c0       	rjmp	.+0      	; 0x334 <reset+0x2a>
+ 334:	00 00       	nop
+	_delay_ms(10);
+	spi_tranceiver(0x70);   //reset all IRQ after every succesfull transmit and receive
+ 336:	80 e7       	ldi	r24, 0x70	; 112
+ 338:	0e 94 6b 00 	call	0xd6	; 0xd6 <spi_tranceiver>
+ 33c:	83 ec       	ldi	r24, 0xC3	; 195
+ 33e:	99 e0       	ldi	r25, 0x09	; 9
+ 340:	01 97       	sbiw	r24, 0x01	; 1
+ 342:	f1 f7       	brne	.-4      	; 0x340 <reset+0x36>
+ 344:	00 c0       	rjmp	.+0      	; 0x346 <reset+0x3c>
+ 346:	00 00       	nop
+	_delay_ms(10);
+	PORTB |= (1 << 4);
+ 348:	c4 9a       	sbi	0x18, 4	; 24
+ 34a:	08 95       	ret
+
+0000034c <_exit>:
+ 34c:	f8 94       	cli
+
+0000034e <__stop_program>:
+ 34e:	ff cf       	rjmp	.-2      	; 0x34e <__stop_program>

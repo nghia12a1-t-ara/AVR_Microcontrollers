@@ -1,0 +1,286 @@
+
+ATmega16_Interfacing_to_Nokia5110.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001e2  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         000001f0  00800060  000001e2  00000256  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  00000446  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000478  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000098  00000000  00000000  000004b4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000aa3  00000000  00000000  0000054c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000731  00000000  00000000  00000fef  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000560  00000000  00000000  00001720  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000148  00000000  00000000  00001c80  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    00000465  00000000  00000000  00001dc8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000383  00000000  00000000  0000222d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000078  00000000  00000000  000025b0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   8:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+   c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  10:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  14:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  18:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  1c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  20:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  24:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  28:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  2c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  30:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  34:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  38:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  3c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  40:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  44:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  48:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  4c:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+  50:	0c 94 3f 00 	jmp	0x7e	; 0x7e <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+
+00000060 <__do_copy_data>:
+  60:	12 e0       	ldi	r17, 0x02	; 2
+  62:	a0 e6       	ldi	r26, 0x60	; 96
+  64:	b0 e0       	ldi	r27, 0x00	; 0
+  66:	e2 ee       	ldi	r30, 0xE2	; 226
+  68:	f1 e0       	ldi	r31, 0x01	; 1
+  6a:	02 c0       	rjmp	.+4      	; 0x70 <__do_copy_data+0x10>
+  6c:	05 90       	lpm	r0, Z+
+  6e:	0d 92       	st	X+, r0
+  70:	a0 35       	cpi	r26, 0x50	; 80
+  72:	b1 07       	cpc	r27, r17
+  74:	d9 f7       	brne	.-10     	; 0x6c <__do_copy_data+0xc>
+  76:	0e 94 ce 00 	call	0x19c	; 0x19c <main>
+  7a:	0c 94 ef 00 	jmp	0x1de	; 0x1de <_exit>
+
+0000007e <__bad_interrupt>:
+  7e:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000082 <N5110_Cmnd>:
+	{
+		SPI_Write(image_data[k]);
+	}
+	PORTB &= ~(1<<DC);
+	SPI_SS_Disable();
+}
+  82:	cf 93       	push	r28
+  84:	c8 2f       	mov	r28, r24
+  86:	c1 98       	cbi	0x18, 1	; 24
+  88:	0e 94 df 00 	call	0x1be	; 0x1be <SPI_SS_Enable>
+  8c:	8c 2f       	mov	r24, r28
+  8e:	0e 94 eb 00 	call	0x1d6	; 0x1d6 <SPI_Write>
+  92:	c1 9a       	sbi	0x18, 1	; 24
+  94:	0e 94 e1 00 	call	0x1c2	; 0x1c2 <SPI_SS_Disable>
+  98:	cf 91       	pop	r28
+  9a:	08 95       	ret
+
+0000009c <N5110_Data>:
+  9c:	ef 92       	push	r14
+  9e:	ff 92       	push	r15
+  a0:	0f 93       	push	r16
+  a2:	1f 93       	push	r17
+  a4:	cf 93       	push	r28
+  a6:	df 93       	push	r29
+  a8:	8c 01       	movw	r16, r24
+  aa:	c1 9a       	sbi	0x18, 1	; 24
+  ac:	0e 94 df 00 	call	0x1be	; 0x1be <SPI_SS_Enable>
+  b0:	f8 01       	movw	r30, r16
+  b2:	01 90       	ld	r0, Z+
+  b4:	00 20       	and	r0, r0
+  b6:	e9 f7       	brne	.-6      	; 0xb2 <N5110_Data+0x16>
+  b8:	31 97       	sbiw	r30, 0x01	; 1
+  ba:	e0 1b       	sub	r30, r16
+  bc:	f1 0b       	sbc	r31, r17
+  be:	1e 16       	cp	r1, r30
+  c0:	1f 06       	cpc	r1, r31
+  c2:	3c f5       	brge	.+78     	; 0x112 <N5110_Data+0x76>
+  c4:	e8 01       	movw	r28, r16
+  c6:	0e 0f       	add	r16, r30
+  c8:	1f 1f       	adc	r17, r31
+  ca:	20 c0       	rjmp	.+64     	; 0x10c <N5110_Data+0x70>
+  cc:	28 81       	ld	r18, Y
+  ce:	30 e0       	ldi	r19, 0x00	; 0
+  d0:	20 52       	subi	r18, 0x20	; 32
+  d2:	31 09       	sbc	r19, r1
+  d4:	f9 01       	movw	r30, r18
+  d6:	ee 0f       	add	r30, r30
+  d8:	ff 1f       	adc	r31, r31
+  da:	ee 0f       	add	r30, r30
+  dc:	ff 1f       	adc	r31, r31
+  de:	e2 0f       	add	r30, r18
+  e0:	f3 1f       	adc	r31, r19
+  e2:	e0 59       	subi	r30, 0x90	; 144
+  e4:	ff 4f       	sbci	r31, 0xFF	; 255
+  e6:	ee 0d       	add	r30, r14
+  e8:	ff 1d       	adc	r31, r15
+  ea:	80 81       	ld	r24, Z
+  ec:	0e 94 eb 00 	call	0x1d6	; 0x1d6 <SPI_Write>
+  f0:	8f ef       	ldi	r24, 0xFF	; 255
+  f2:	e8 1a       	sub	r14, r24
+  f4:	f8 0a       	sbc	r15, r24
+  f6:	85 e0       	ldi	r24, 0x05	; 5
+  f8:	e8 16       	cp	r14, r24
+  fa:	f1 04       	cpc	r15, r1
+  fc:	39 f7       	brne	.-50     	; 0xcc <N5110_Data+0x30>
+  fe:	80 e0       	ldi	r24, 0x00	; 0
+ 100:	0e 94 eb 00 	call	0x1d6	; 0x1d6 <SPI_Write>
+ 104:	21 96       	adiw	r28, 0x01	; 1
+ 106:	0c 17       	cp	r16, r28
+ 108:	1d 07       	cpc	r17, r29
+ 10a:	19 f0       	breq	.+6      	; 0x112 <N5110_Data+0x76>
+ 10c:	e1 2c       	mov	r14, r1
+ 10e:	f1 2c       	mov	r15, r1
+ 110:	dd cf       	rjmp	.-70     	; 0xcc <N5110_Data+0x30>
+ 112:	0e 94 e1 00 	call	0x1c2	; 0x1c2 <SPI_SS_Disable>
+ 116:	df 91       	pop	r29
+ 118:	cf 91       	pop	r28
+ 11a:	1f 91       	pop	r17
+ 11c:	0f 91       	pop	r16
+ 11e:	ff 90       	pop	r15
+ 120:	ef 90       	pop	r14
+ 122:	08 95       	ret
+
+00000124 <N5110_Reset>:
+ 124:	c0 98       	cbi	0x18, 0	; 24
+ 126:	2f ef       	ldi	r18, 0xFF	; 255
+ 128:	80 e7       	ldi	r24, 0x70	; 112
+ 12a:	92 e0       	ldi	r25, 0x02	; 2
+ 12c:	21 50       	subi	r18, 0x01	; 1
+ 12e:	80 40       	sbci	r24, 0x00	; 0
+ 130:	90 40       	sbci	r25, 0x00	; 0
+ 132:	e1 f7       	brne	.-8      	; 0x12c <N5110_Reset+0x8>
+ 134:	00 c0       	rjmp	.+0      	; 0x136 <N5110_Reset+0x12>
+ 136:	00 00       	nop
+ 138:	c0 9a       	sbi	0x18, 0	; 24
+ 13a:	08 95       	ret
+
+0000013c <N5110_init>:
+ 13c:	0e 94 92 00 	call	0x124	; 0x124 <N5110_Reset>
+ 140:	81 e2       	ldi	r24, 0x21	; 33
+ 142:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 146:	80 ec       	ldi	r24, 0xC0	; 192
+ 148:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 14c:	87 e0       	ldi	r24, 0x07	; 7
+ 14e:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 152:	83 e1       	ldi	r24, 0x13	; 19
+ 154:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 158:	80 e2       	ldi	r24, 0x20	; 32
+ 15a:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 15e:	8c e0       	ldi	r24, 0x0C	; 12
+ 160:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 164:	08 95       	ret
+
+00000166 <lcd_setXY>:
+ 166:	cf 93       	push	r28
+ 168:	c6 2f       	mov	r28, r22
+ 16a:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 16e:	8c 2f       	mov	r24, r28
+ 170:	0e 94 41 00 	call	0x82	; 0x82 <N5110_Cmnd>
+ 174:	cf 91       	pop	r28
+ 176:	08 95       	ret
+
+00000178 <N5110_clear>:
+ 178:	cf 93       	push	r28
+ 17a:	df 93       	push	r29
+ 17c:	0e 94 df 00 	call	0x1be	; 0x1be <SPI_SS_Enable>
+ 180:	c1 9a       	sbi	0x18, 1	; 24
+ 182:	c8 ef       	ldi	r28, 0xF8	; 248
+ 184:	d1 e0       	ldi	r29, 0x01	; 1
+ 186:	80 e0       	ldi	r24, 0x00	; 0
+ 188:	0e 94 eb 00 	call	0x1d6	; 0x1d6 <SPI_Write>
+ 18c:	21 97       	sbiw	r28, 0x01	; 1
+ 18e:	d9 f7       	brne	.-10     	; 0x186 <N5110_clear+0xe>
+ 190:	c1 98       	cbi	0x18, 1	; 24
+ 192:	0e 94 e1 00 	call	0x1c2	; 0x1c2 <SPI_SS_Disable>
+ 196:	df 91       	pop	r29
+ 198:	cf 91       	pop	r28
+ 19a:	08 95       	ret
+
+0000019c <main>:
+
+int main()
+{
+	SPI_Init();
+ 19c:	0e 94 e3 00 	call	0x1c6	; 0x1c6 <SPI_Init>
+	N5110_init();
+ 1a0:	0e 94 9e 00 	call	0x13c	; 0x13c <N5110_init>
+	N5110_clear();
+ 1a4:	0e 94 bc 00 	call	0x178	; 0x178 <N5110_clear>
+	lcd_setXY(0x40,0x80);
+ 1a8:	60 e8       	ldi	r22, 0x80	; 128
+ 1aa:	80 e4       	ldi	r24, 0x40	; 64
+ 1ac:	0e 94 b3 00 	call	0x166	; 0x166 <lcd_setXY>
+	N5110_Data("DUC TUNG AN CUT");
+ 1b0:	80 e6       	ldi	r24, 0x60	; 96
+ 1b2:	90 e0       	ldi	r25, 0x00	; 0
+ 1b4:	0e 94 4e 00 	call	0x9c	; 0x9c <N5110_Data>
+	while(1)	
+	return 0;
+ 1b8:	80 e0       	ldi	r24, 0x00	; 0
+ 1ba:	90 e0       	ldi	r25, 0x00	; 0
+ 1bc:	08 95       	ret
+
+000001be <SPI_SS_Enable>:
+char SPI_Read()
+{
+	SPDR = 0xFF;
+	while(!(SPSR & (1<<SPIF)));										/* wait here while SPIF flag set */
+	return(SPDR);													/* Return the SPDR value */
+}
+ 1be:	c4 98       	cbi	0x18, 4	; 24
+ 1c0:	08 95       	ret
+
+000001c2 <SPI_SS_Disable>:
+ 1c2:	c4 9a       	sbi	0x18, 4	; 24
+ 1c4:	08 95       	ret
+
+000001c6 <SPI_Init>:
+ 1c6:	83 eb       	ldi	r24, 0xB3	; 179
+ 1c8:	87 bb       	out	0x17, r24	; 23
+ 1ca:	c0 9a       	sbi	0x18, 0	; 24
+ 1cc:	be 98       	cbi	0x17, 6	; 23
+ 1ce:	c4 9a       	sbi	0x18, 4	; 24
+ 1d0:	81 e5       	ldi	r24, 0x51	; 81
+ 1d2:	8d b9       	out	0x0d, r24	; 13
+ 1d4:	08 95       	ret
+
+000001d6 <SPI_Write>:
+
+void SPI_Write(char write_data)										
+{
+	SPDR = write_data;													
+ 1d6:	8f b9       	out	0x0f, r24	; 15
+	while(!(SPSR & (1<<SPIF)));										/* wait here while SPIF flag set */
+ 1d8:	77 9b       	sbis	0x0e, 7	; 14
+ 1da:	fe cf       	rjmp	.-4      	; 0x1d8 <SPI_Write+0x2>
+}
+ 1dc:	08 95       	ret
+
+000001de <_exit>:
+ 1de:	f8 94       	cli
+
+000001e0 <__stop_program>:
+ 1e0:	ff cf       	rjmp	.-2      	; 0x1e0 <__stop_program>
