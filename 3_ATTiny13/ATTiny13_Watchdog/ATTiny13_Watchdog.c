@@ -1,5 +1,5 @@
-/*
- * ATTiny13_GPIO.c
+/**
+ * ATTiny13_Watchdog.c
  *
  * Created: 19/08/2021 8:28:53 PM
  * Author : Nghia Taarabt

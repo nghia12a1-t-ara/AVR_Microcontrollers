@@ -1,9 +1,9 @@
-/*
+/**
  * ATTiny13_ADC.c
  *
  * Created: 19/07/2021 9:42:31 PM
  * Author : Nghia Taarabt
- */ 
+ */
 
 #include <avr/io.h>
 #include <util/delay.h>
