@@ -38,15 +38,25 @@ typedef enum {
 
 #define	IR_PROTO_EVENT_INIT				(0)
 #define	IR_PROTO_EVENT_DATA				(1)
-#define	IR_PROTO_EVENT_FINI				(2)
+#define	IR_PROTO_EVENT_FINISH			(2)
 #define	IR_PROTO_EVENT_HOOK				(3)
 
 /* a 9ms leading pulse burst, NEC Infrared Transmission Protocol detected,
 	counter = 0.009/(1.0/38222.) * 2 = 343.998 * 2 = 686 (+/- 30) */
 #define IR_NEC_START_BURST_MIN			(655U)
 #define IR_NEC_START_BURST_MAX			(815U)
-#define IR_NEC_TIMEOUT					(7400U)
+/* a 4.5ms space for regular transmition of NEC Code; counter => 0.0045/(1.0/38222.0) * 2 = 344 (+/- 15) */
+#define IR_NEC_START_SPACE_MIN			(330U)
+#define IR_NEC_START_SPACE_MAX			(360U)
+/* a 2.25ms space for NEC Code repeat; counter => 0.00225/(1.0/38222.0) * 2 = 172 (+/- 15) */
+#define IR_NEC_REPEAT_SPACE_MIN			(155U)
+#define IR_NEC_REPEAT_SPACE_MAX			(185U)
 
+#define IR_NEC_BIT_NUM_MAX				(32U)
+#define IR_NEC_TIMEOUT					(7400U)
+#define isNEC_START_BURST(time)			(time > IR_NEC_START_BURST_MIN && time < IR_NEC_START_BURST_MAX)
+#define isNEC_START_SPACE(time)			(time > IR_NEC_START_SPACE_MIN && time < IR_NEC_START_SPACE_MAX)
+#define isNEC_REPEAT_SPACE(time)		(time > IR_NEC_REPEAT_SPACE_MIN && time < IR_NEC_REPEAT_SPACE_MAX)
 
 volatile uint16_t IR_timeout = 0U;
 volatile uint16_t IR_Counter = 0U;
@@ -77,38 +87,23 @@ int8_t IR_NEC_process(uint16_t counter, uint8_t value)
 	switch( IR_proto_event )
 	{
 		case IR_PROTO_EVENT_INIT:
-			/* expecting a space */
-			if( value == HIGH )
-			{
-				if( counter > 330 && counter < 360 )
-				{
-					/* a 4.5ms space for regular transmition of NEC Code; counter => 0.0045/(1.0/38222.0) * 2 = 344 (+/- 15) */
-					IR_proto_event = IR_PROTO_EVENT_DATA;
-					IR_data = IR_index = 0;
-					retval = IR_SUCCESS;
-				}
-				else if( counter > 155 && counter < 185 )
-				{
-					/* a 2.25ms space for NEC Code repeat; counter => 0.00225/(1.0/38222.0) * 2 = 172 (+/- 15) */
-					IR_proto_event = IR_PROTO_EVENT_FINI;
-					retval = IR_SUCCESS;
-				}
-			}
+			IR_data = IR_index = 0U;
+			retval = IR_SUCCESS;
 			break;
 		case IR_PROTO_EVENT_DATA:
 			/* Reading 4 octets (32bits) of data:
-				 1) the 8-bit address for the receiving device
+			 1) the 8-bit address for the receiving device
 			 2) the 8-bit logical inverse of the address
 			 3) the 8-bit command
-				 4) the 8-bit logical inverse of the command
-				Logical '0' – a 562.5µs pulse burst followed by a 562.5µs (<90 IR counter cycles) space, with a total transmit time of 1.125ms
+			 4) the 8-bit logical inverse of the command
+			Logical '0' – a 562.5µs pulse burst followed by a 562.5µs (<90 IR counter cycles) space, with a total transmit time of 1.125ms
 			Logical '1' – a 562.5µs pulse burst followed by a 1.6875ms(>=90 IR counter cycles) space, with a total transmit time of 2.25ms */
-			if( IR_index < 32 )
+			if( IR_index < IR_NEC_BIT_NUM_MAX )
 			{
 				if( value == HIGH )
 				{
-					IR_data |= ((uint32_t)((counter < 90) ? 0 : 1) << IR_index++);
-					if( IR_index == 32 )
+					IR_data |= ((uint32_t)((counter < 90U) ? 0U : 1U) << IR_index++);
+					if( IR_index == IR_NEC_BIT_NUM_MAX )
 					{
 						IR_proto_event = IR_PROTO_EVENT_HOOK;
 					}
@@ -120,11 +115,11 @@ int8_t IR_NEC_process(uint16_t counter, uint8_t value)
 			/* expecting a final 562.5µs pulse burst to signify the end of message transmission */
 			if( value == LOW )
 			{
-				IR_proto_event = IR_PROTO_EVENT_FINI;
+				IR_proto_event = IR_PROTO_EVENT_FINISH;
 				retval = IR_SUCCESS;
 			}
 			break;
-		case IR_PROTO_EVENT_FINI:
+		case IR_PROTO_EVENT_FINISH:
 			/* copying data to volatile variable; raw data is ready */
 			IR_rawdata = IR_data;
 			break;
@@ -135,7 +130,7 @@ int8_t IR_NEC_process(uint16_t counter, uint8_t value)
 	return retval;
 }
 
-void IR_process(uint8_t pinValue)
+void IR_process(uint8_t pinIRValue)
 {
 	static IR_State_t IR_State = IR_STATE_IDLE;
 	/* load IR counter value to local variable, then reset counter */
@@ -146,27 +141,41 @@ void IR_process(uint8_t pinValue)
 	{
 		case IR_STATE_IDLE:
 			/* awaiting for an initial signal */
-			if( pinValue == HIGH )
+			if( pinIRValue == HIGH )
 			{
 				IR_State = IR_STATE_INIT;
 			}
 			break;
 		case IR_STATE_INIT:
 			/* consume leading pulse burst */
-			if( pinValue == LOW && counter > IR_NEC_START_BURST_MIN && counter < IR_NEC_START_BURST_MAX )
+			if( pinIRValue == LOW )
 			{
-				IR_State 		= IR_STATE_PROCESS;
-				IR_proto_event	= IR_PROTO_EVENT_INIT;
-				IR_timeout 		= IR_NEC_TIMEOUT;
+				if( !isNEC_START_BURST(counter) )
+				{
+					IR_State 	= IR_STATE_FINISH;
+				}
+				IR_timeout 	= IR_NEC_TIMEOUT;
 			}
-			else
+			else	/* pinIRValue == HIGH */
 			{
-				IR_State = IR_STATE_FINISH;
+				if( isNEC_START_SPACE(counter) )
+				{
+					IR_State = IR_STATE_PROCESS;
+					IR_proto_event = IR_PROTO_EVENT_INIT;
+				}
+				else if( isNEC_REPEAT_SPACE(counter) )
+				{
+					IR_proto_event = IR_PROTO_EVENT_FINISH;
+				}
+				else
+				{
+					IR_State = IR_STATE_FINISH;
+				}
 			}
 			break;
 		case IR_STATE_PROCESS:
 			/* read and decode NEC Protocol data */
-			if( IR_NEC_process(counter, pinValue) )
+			if( IR_SUCCESS != IR_NEC_process(counter, pinIRValue) )
 			{
 				IR_State = IR_STATE_FINISH;
 			}
@@ -174,7 +183,7 @@ void IR_process(uint8_t pinValue)
 		case IR_STATE_FINISH:
 			/* clear timeout and set idle mode */
 			IR_State = IR_STATE_IDLE;
-			IR_timeout = 0;
+			IR_timeout = 0U;
 			break;
 		default:
 			break;
@@ -196,10 +205,10 @@ static int8_t IR_read(uint8_t *address, uint8_t *command)
 
 ISR(INT0_vect)
 {
-	uint8_t pinValue;
+	uint8_t pinIRValue;
 	/* read IR_IN_PIN digital value (NOTE: logical inverse value = value ^ 1 due to sensor used) */
-	pinValue = ((PINB & (1 << IR_IN_PIN)) > 0) ? LOW : HIGH;
-	IR_process(pinValue);
+	pinIRValue = ((PINB & (1 << IR_IN_PIN)) > 0) ? LOW : HIGH;
+	IR_process(pinIRValue);
 }
 
 ISR(TIM0_COMPA_vect)
