@@ -121,28 +121,24 @@ IR_NEC_process(uint16_t counter, uint8_t value)
 }
 
 static void
-IR_process()
+IR_process(uint8_t pinValue)
 {
-	uint8_t value;
 	uint16_t counter;
 
 	/* load IR counter value to local variable, then reset counter */
 	counter = IR_counter;
 	IR_counter = 0;
 
-	/* read IR_IN_PIN digital value (NOTE: logical inverse value = value ^ 1 due to sensor used) */
-	value = (PINB & (1 << IR_IN_PIN)) > 0 ? LOW : HIGH;
-
 	switch(IR_event) {
 	case IR_EVENT_IDLE:
 		/* awaiting for an initial signal */
-		if (value == HIGH) {
+		if (pinValue == HIGH) {
 			IR_event = IR_EVENT_INIT;
 		}
 		break;
 	case IR_EVENT_INIT:
 		/* consume leading pulse burst */
-		if (value == LOW) {
+		if (pinValue == LOW) {
 			if (counter > 655 && counter < 815) {
 				/* a 9ms leading pulse burst, NEC Infrared Transmission Protocol detected,
 				counter = 0.009/(1.0/38222.) * 2 = 343.998 * 2 = 686 (+/- 30) */
@@ -158,7 +154,7 @@ IR_process()
 		break;
 	case IR_EVENT_PROC:
 		/* read and decode NEC Protocol data */
-		if (IR_NEC_process(counter, value))
+		if (IR_NEC_process(counter, pinValue))
 			IR_event = IR_EVENT_FINI;
 		break;
 	case IR_EVENT_FINI:
@@ -187,8 +183,10 @@ IR_read(uint8_t *address, uint8_t *command)
 
 ISR(INT0_vect)
 {
-
-	IR_process();
+	uint8_t pinValue;
+	/* read IR_IN_PIN digital value (NOTE: logical inverse value = value ^ 1 due to sensor used) */
+	pinValue = (PINB & (1 << IR_IN_PIN)) > 0 ? LOW : HIGH;
+	IR_process(pinValue);
 }
 
 ISR(TIM0_COMPA_vect)
