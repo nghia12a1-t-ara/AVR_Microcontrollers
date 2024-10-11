@@ -23,7 +23,7 @@
 #define	IR_IN_PORT		PORTB
 #define	IR_OCR0A		(122)
 
-#define	LOW			(0)
+#define	LOW				(0)
 #define	HIGH			(1)
 
 #define	IR_SUCCESS		(0)
@@ -49,7 +49,7 @@ typedef enum {
 
 
 volatile uint16_t IR_timeout = 0U;
-volatile uint16_t IR_counter = 0U;
+volatile uint16_t IR_Counter = 0U;
 volatile uint32_t IR_rawdata = 0U;
 
 uint8_t IR_proto_event = 0U;
@@ -139,8 +139,8 @@ void IR_process(uint8_t pinValue)
 {
 	static IR_State_t IR_State = IR_STATE_IDLE;
 	/* load IR counter value to local variable, then reset counter */
-	uint16_t counter = IR_counter;
-	IR_counter = 0;
+	uint16_t counter = IR_Counter;
+	IR_Counter = 0;
 
 	switch( IR_State )
 	{
@@ -207,7 +207,7 @@ ISR(TIM0_COMPA_vect)
 	/* When transmitting or receiving remote control codes using the NEC IR transmission protocol,
 	the communications performs optimally when the carrier frequency (used for modulation/demodulation)
  	is set to 38.222kHz. */
-	if( IR_counter++ > 10000 )
+	if( IR_Counter++ > 10000 )
 		IR_State = IR_STATE_IDLE;
 	if( IR_timeout && --IR_timeout == 0 )
 		IR_State = IR_STATE_IDLE;
