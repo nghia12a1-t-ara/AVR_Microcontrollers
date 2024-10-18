@@ -61,7 +61,7 @@ typedef enum {
 volatile uint16_t IR_timeout = 0U;
 volatile uint16_t IR_Counter = 0U;
 volatile uint32_t IR_rawdata = 0U;
-
+static IR_State_t IR_State = IR_STATE_IDLE;
 uint8_t IR_proto_event = 0U;
 uint8_t IR_index = 0U;
 uint32_t IR_data = 0U;
@@ -132,7 +132,6 @@ int8_t IR_NEC_process(uint16_t counter, uint8_t value)
 
 void IR_process(uint8_t pinIRValue)
 {
-	static IR_State_t IR_State = IR_STATE_IDLE;
 	/* load IR counter value to local variable, then reset counter */
 	uint16_t counter = IR_Counter;
 	IR_Counter = 0;
