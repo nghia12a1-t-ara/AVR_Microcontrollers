@@ -1,10 +1,10 @@
 /*
  * LCD_16x2_C_file.c
- * http://www.electronicwings.com
  *
+ * Created: 7/17/2024 9:08:15 PM
+ * Author : Nghia Taarabt
  */
-
-
+ 
 #include "LCD_16x2_H_file.h"						/* Include LCD header file */
 
 

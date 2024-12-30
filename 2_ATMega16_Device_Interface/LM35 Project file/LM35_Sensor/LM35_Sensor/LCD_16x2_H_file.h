@@ -1,7 +1,8 @@
 /*
- * LCD_16x2_H_file.h
- * http://www.electronicwings.com
+ * LCD_16x2_C_file.h
  *
+ * Created: 7/17/2024 9:08:15 PM
+ * Author : Nghia Taarabt
  */
 
 #ifndef LCD_16x2_H_H_					/* Define library H file if not defined */

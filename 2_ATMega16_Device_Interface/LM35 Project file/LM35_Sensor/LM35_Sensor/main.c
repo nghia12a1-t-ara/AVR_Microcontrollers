@@ -1,7 +1,9 @@
 /*
-	LM35 Interfacing with ATmega16/32
-	http://www.electronicwings.com
- */ 
+ * main.c
+ *
+ * Created: 7/17/2024 9:08:15 PM
+ * Author : Nghia Taarabt
+ */
 
 #define F_CPU 8000000UL
 #include <avr/io.h>
